@@ -95,7 +95,7 @@ class Save {
       case null:
         children = [];
       case FormulaCellValue():
-        var sharedFormulaAttributes;
+        var sharedFormulaAttributes = <XmlAttribute>[];
         if (value.shared) {
           sharedFormulaAttributes = <XmlAttribute>[
             XmlAttribute(XmlName('t'), 'shared'),
@@ -109,7 +109,7 @@ class Save {
           }
         }
         children = [
-          XmlElement(XmlName('f'), [sharedFormulaAttributes],
+          XmlElement(XmlName('f'), sharedFormulaAttributes,
               [XmlText(value.formula)]),
           XmlElement(XmlName('v'), [], [XmlText('')]),
         ];
