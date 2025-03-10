@@ -627,11 +627,11 @@ class Parser {
           if (shared != null && shared == 'shared') {
             var ref = formulaNode.first.getAttribute('ref');
             var si = formulaNode.first.getAttribute('si');
-            
+
             value = FormulaCellValue(
                 _parseValue(formulaNode.first).toString(),
                 shared: true,
-                shareRef: ref!,
+                shareRef: ref,
                 shareIndex: si!);
           } else {
             value = FormulaCellValue(_parseValue(formulaNode.first).toString());
