@@ -95,8 +95,17 @@ class Save {
       case null:
         children = [];
       case FormulaCellValue():
+        var sharedFormulaAttributes;
+        if (value.shared) {
+          sharedFormulaAttributes = <XmlAttribute>[
+            XmlAttribute(XmlName('t'), 'shared'),
+            XmlAttribute(XmlName('ref'), value.shareRef),
+            XmlAttribute(XmlName('si'), value.shareIndex),
+          ];
+        }
         children = [
-          XmlElement(XmlName('f'), [], [XmlText(value.formula)]),
+          XmlElement(XmlName('f'), [sharedFormulaAttributes!],
+              [XmlText(value.formula)]),
           XmlElement(XmlName('v'), [], [XmlText('')]),
         ];
       case IntCellValue():
