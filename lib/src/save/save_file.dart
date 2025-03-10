@@ -109,7 +109,7 @@ class Save {
           }
         }
         children = [
-          XmlElement(XmlName('f'), [sharedFormulaAttributes!],
+          XmlElement(XmlName('f'), [sharedFormulaAttributes],
               [XmlText(value.formula)]),
           XmlElement(XmlName('v'), [], [XmlText('')]),
         ];
