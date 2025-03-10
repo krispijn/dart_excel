@@ -99,9 +99,14 @@ class Save {
         if (value.shared) {
           sharedFormulaAttributes = <XmlAttribute>[
             XmlAttribute(XmlName('t'), 'shared'),
-            XmlAttribute(XmlName('ref'), value.shareRef),
             XmlAttribute(XmlName('si'), value.shareIndex),
           ];
+          if (value.shareRef != null) {
+            sharedFormulaAttributes.insert(
+              1,
+              XmlAttribute(XmlName('ref'), value.shareRef!),
+            );
+          }
         }
         children = [
           XmlElement(XmlName('f'), [sharedFormulaAttributes!],

@@ -115,10 +115,10 @@ class FormulaCellValue extends CellValue {
   final String formula;
 
   final bool shared;
-  final String shareRef;
+  final String? shareRef;
   final String shareIndex;
 
-  const FormulaCellValue(this.formula, {this.shared = false, this.shareRef = "", this.shareIndex = "0"});
+  const FormulaCellValue(this.formula, {this.shared = false, this.shareRef, this.shareIndex = "0"});
 
   @override
   String toString() {
