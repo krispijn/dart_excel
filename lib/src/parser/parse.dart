@@ -619,10 +619,14 @@ class Parser {
       // error
       case 'e':
       // formula
-      // DEPRECATED: sometimes str cells have formula's at 'f', so they should be treaded as the default case.
-      // case 'str':
-      //   value = FormulaCellValue(_parseValue(node.findElements('v').first));
-      //   break;
+      case 'str':
+        var formulaNode = node.findElements('f');
+        if (formulaNode.isNotEmpty) {
+          value = FormulaCellValue(_parseValue(formulaNode.first).toString());
+        } else {
+          value = FormulaCellValue(_parseValue(node.findElements('v').first));
+        }
+        break;
       // inline string
       case 'inlineStr':
         // <c r='B2' t='inlineStr'>

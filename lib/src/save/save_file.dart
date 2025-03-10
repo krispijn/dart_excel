@@ -60,6 +60,7 @@ class Save {
       XmlAttribute(XmlName('r'), rC),
       if (value is TextCellValue) XmlAttribute(XmlName('t'), 's'),
       if (value is BoolCellValue) XmlAttribute(XmlName('t'), 'b'),
+      if (value is FormulaCellValue) XmlAttribute(XmlName('t'), 'str'),
     ];
 
     final cellStyle =
