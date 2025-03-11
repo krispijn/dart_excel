@@ -110,8 +110,7 @@ class Save {
         }
         children = [
           XmlElement(XmlName('f'), sharedFormulaAttributes,
-              [XmlText(value.formula)]),
-          XmlElement(XmlName('v'), [], [XmlText('')]),
+              [XmlText(value.formula)]), //Not writing the <v/> means Excel is forced to evaluate the formula (this is desired)
         ];
       case IntCellValue():
         final String v = switch (numberFormat) {
