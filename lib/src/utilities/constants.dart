@@ -12,6 +12,9 @@ const _relationshipsSharedStrings =
 const _relationships =
     'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
 
+const _relationshipsThemes =
+    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme";
+
 const _spreasheetXlsx = 'xlsx';
 
 // reference: https://support.microsoft.com/en-gb/office/change-the-column-width-and-row-height-72f5e3cc-994d-43e8-ae58-9774a0905f46

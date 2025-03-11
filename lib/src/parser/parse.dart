@@ -4,6 +4,7 @@ class Parser {
   final Excel _excel;
   final List<String> _rId = [];
   final Map<String, String> _worksheetTargets = {};
+  final Map<String, String> _themeTargets = {};
 
   Parser._(this._excel);
 
@@ -54,6 +55,9 @@ class Parser {
               break;
             case _relationshipsSharedStrings:
               _excel._sharedStringsTarget = target;
+              break;
+            case _relationshipsThemes:
+              if (id !=null) _themeTargets[id] = target;
               break;
           }
         }
@@ -255,8 +259,21 @@ class Parser {
         String patternType = node.getAttribute('patternType') ?? '', rgb;
         if (node.children.isNotEmpty) {
           node.findElements('fgColor').forEach((child) {
-            rgb = child.getAttribute('rgb') ?? '';
-            _excel._patternFill.add(rgb);
+            String? theme = child.getAttribute('theme');
+            String? tint = child.getAttribute('tint');
+            String? rgbFill = child.getAttribute('rgb');
+            String fillStr = "";
+            // Janky, but this ensures our theme colors keep working
+            if (theme != null){       
+              fillStr = "t" + theme;
+              if (tint != null) {
+                fillStr += ";" + tint;
+              } 
+            } else {
+              fillStr = rgbFill!;
+            }
+
+            _excel._patternFill.add(fillStr);
           });
         } else {
           _excel._patternFill.add(patternType);
@@ -472,9 +489,11 @@ class Parser {
             italic: isItalic,
             underline: underline,
             backgroundColorHex:
-                backgroundColor == 'none' || backgroundColor.isEmpty
+                backgroundColor == 'none' || backgroundColor.isEmpty || backgroundColor.contains('t')
                     ? ExcelColor.none
                     : backgroundColor.excelColor,
+            backgroundColorTheme: 
+                backgroundColor.contains('t') ? backgroundColor : null,
             horizontalAlign: horizontalAlign,
             verticalAlign: verticalAlign,
             textWrapping: textWrapping,

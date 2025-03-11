@@ -5,6 +5,7 @@ part of excel;
 class CellStyle extends Equatable {
   String _fontColorHex = ExcelColor.black.colorHex;
   String _backgroundColorHex = ExcelColor.none.colorHex;
+  String? _backgroundColorTheme;
   String? _fontFamily;
   FontScheme _fontScheme;
   HorizontalAlign _horizontalAlign = HorizontalAlign.Left;
@@ -26,6 +27,7 @@ class CellStyle extends Equatable {
   CellStyle({
     ExcelColor fontColorHex = ExcelColor.black,
     ExcelColor backgroundColorHex = ExcelColor.none,
+    String? backgroundColorTheme,
     int? fontSize,
     String? fontFamily,
     FontScheme? fontScheme,
@@ -53,6 +55,7 @@ class CellStyle extends Equatable {
         _rotation = rotation,
         _fontColorHex = _isColorAppropriate(fontColorHex.colorHex),
         _backgroundColorHex = _isColorAppropriate(backgroundColorHex.colorHex),
+        _backgroundColorTheme = backgroundColorTheme,
         _verticalAlign = verticalAlign,
         _horizontalAlign = horizontalAlign,
         _leftBorder = leftBorder ?? Border(),
@@ -66,6 +69,7 @@ class CellStyle extends Equatable {
   CellStyle copyWith({
     ExcelColor? fontColorHexVal,
     ExcelColor? backgroundColorHexVal,
+    String? backgroundColorTheme,
     String? fontFamilyVal,
     FontScheme? fontSchemeVal,
     HorizontalAlign? horizontalAlignVal,
@@ -89,6 +93,7 @@ class CellStyle extends Equatable {
       fontColorHex: fontColorHexVal ?? this._fontColorHex.excelColor,
       backgroundColorHex:
           backgroundColorHexVal ?? this._backgroundColorHex.excelColor,
+      backgroundColorTheme: backgroundColorTheme ?? this._backgroundColorTheme,
       fontFamily: fontFamilyVal ?? this._fontFamily,
       fontScheme: fontSchemeVal ?? this._fontScheme,
       horizontalAlign: horizontalAlignVal ?? this._horizontalAlign,
@@ -360,6 +365,7 @@ class CellStyle extends Equatable {
         _horizontalAlign,
         _fontColorHex,
         _backgroundColorHex,
+        _backgroundColorTheme,
         _leftBorder,
         _rightBorder,
         _topBorder,

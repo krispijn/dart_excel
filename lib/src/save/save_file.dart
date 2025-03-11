@@ -43,7 +43,7 @@ class Save {
 
   // Manage value's type
   XmlElement _createCell(String sheet, int columnIndex, int rowIndex,
-      CellValue? value, NumFormat? numberFormat) {
+      CellValue? value, CellStyle? cellStyle) {
     SharedString? sharedString;
     if (value is TextCellValue) {
       sharedString = _excel._sharedStrings.tryFind(value.toString());
@@ -54,6 +54,9 @@ class Save {
       }
     }
 
+    NumFormat? numberFormat;
+    numberFormat = cellStyle!.numberFormat;
+
     String rC = getCellId(columnIndex, rowIndex);
 
     var attributes = <XmlAttribute>[
@@ -62,9 +65,6 @@ class Save {
       if (value is BoolCellValue) XmlAttribute(XmlName('t'), 'b'),
       if (value is FormulaCellValue) XmlAttribute(XmlName('t'), 'str'),
     ];
-
-    final cellStyle =
-        _excel._sheetMap[sheet]?._sheetData[rowIndex]?[columnIndex]?.cellStyle;
 
     if (_excel._styleChanges && cellStyle != null) {
       int upperLevelPos = _checkPosition(_excel._cellStyleList, cellStyle);
@@ -109,8 +109,9 @@ class Save {
           }
         }
         children = [
-          XmlElement(XmlName('f'), sharedFormulaAttributes,
-              [XmlText(value.formula)]), //Not writing the <v/> means Excel is forced to evaluate the formula (this is desired)
+          XmlElement(XmlName('f'), sharedFormulaAttributes, [
+            XmlText(value.formula)
+          ]), //Not writing the <v/> means Excel is forced to evaluate the formula (this is desired)
         ];
       case IntCellValue():
         final String v = switch (numberFormat) {
@@ -223,6 +224,9 @@ class Save {
 
       /// Filling the inner usable extra list of background color
       String backgroundColor = cellStyle.backgroundColor.colorHex;
+      if (cellStyle._backgroundColorTheme != null && cellStyle._backgroundColorTheme!.isNotEmpty) { 
+        backgroundColor = cellStyle._backgroundColorTheme!; 
+      } 
       if (!_excel._patternFill.contains(backgroundColor) &&
           !innerPatternFill.contains(backgroundColor)) {
         innerPatternFill.add(backgroundColor);
@@ -326,6 +330,23 @@ class Save {
             ], [
               XmlElement(XmlName('fgColor'),
                   [XmlAttribute(XmlName('rgb'), color)], []),
+              XmlElement(
+                  XmlName('bgColor'), [XmlAttribute(XmlName('rgb'), color)], [])
+            ])
+          ]));
+        } else if (color.startsWith("t")) {
+          // theme color!
+          var themeSplit = color.split(";");
+
+          fills.children.add(XmlElement(XmlName('fill'), [], [
+            XmlElement(XmlName('patternFill'), [
+              XmlAttribute(XmlName('patternType'), 'solid')
+            ], [
+              XmlElement(XmlName('fgColor'), [
+                XmlAttribute(XmlName('theme'), themeSplit[0].replaceAll('t', '')),
+                if (themeSplit[1].isNotEmpty)
+                  XmlAttribute(XmlName('tint'), themeSplit[1]),
+              ], []),
               XmlElement(
                   XmlName('bgColor'), [XmlAttribute(XmlName('rgb'), color)], [])
             ])
@@ -641,6 +662,7 @@ class Save {
 
     for (var rowIndex = 0; rowIndex < sheetObject._maxRows; rowIndex++) {
       double? height;
+      CellStyle? lastUsedStyle;
 
       if (customHeights.containsKey(rowIndex)) {
         height = customHeights[rowIndex];
@@ -655,11 +677,24 @@ class Save {
           columnIndex < sheetObject._maxColumns;
           columnIndex++) {
         var data = sheetObject._sheetData[rowIndex]![columnIndex];
+        var cellValue;
+        var cellStyle;
+
         if (data == null) {
-          continue;
+          //continue;
+          // this means we are considering a merged cell
+          cellValue = null;
+          cellStyle = lastUsedStyle;
+        } else {
+          // regular cell
+          cellValue = data.value;
+          cellStyle = data.cellStyle;
+          lastUsedStyle =
+              data.cellStyle; // store this in case next cells are merged
         }
-        _updateCell(sheetName, foundRow, columnIndex, rowIndex, data.value,
-            data.cellStyle?.numberFormat);
+
+        _updateCell(
+            sheetName, foundRow, columnIndex, rowIndex, cellValue, cellStyle);
       }
     }
   }
@@ -1002,8 +1037,8 @@ class Save {
     return cell;
   } */
   XmlElement _updateCell(String sheet, XmlElement row, int columnIndex,
-      int rowIndex, CellValue? value, NumFormat? numberFormat) {
-    var cell = _createCell(sheet, columnIndex, rowIndex, value, numberFormat);
+      int rowIndex, CellValue? value, CellStyle? cellStyle) {
+    var cell = _createCell(sheet, columnIndex, rowIndex, value, cellStyle);
     row.children.add(cell);
     return cell;
   }
