@@ -55,7 +55,7 @@ class Save {
     }
 
     NumFormat? numberFormat;
-    numberFormat = cellStyle!.numberFormat;
+    if (cellStyle != null) numberFormat = cellStyle.numberFormat;
 
     String rC = getCellId(columnIndex, rowIndex);
 
