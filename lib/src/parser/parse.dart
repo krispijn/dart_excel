@@ -668,7 +668,20 @@ class Parser {
       default:
         var formulaNode = node.findElements('f');
         if (formulaNode.isNotEmpty) {
-          value = FormulaCellValue(_parseValue(formulaNode.first).toString());
+          var shared = formulaNode.first.getAttribute('t');
+
+          if (shared != null && shared == 'shared') {
+            var ref = formulaNode.first.getAttribute('ref');
+            var si = formulaNode.first.getAttribute('si');
+
+            value = FormulaCellValue(
+                _parseValue(formulaNode.first).toString(),
+                shared: true,
+                shareRef: ref,
+                shareIndex: si!);
+          } else {
+            value = FormulaCellValue(_parseValue(formulaNode.first).toString());
+          }
         } else {
           final vNode = node.findElements('v').firstOrNull;
           if (vNode == null) {
